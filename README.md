@@ -59,25 +59,25 @@
 
 ```mermaid
 flowchart TB
-  subgraph FE [Frontend (Vue 3 + Vite)]
-    ChatUI["Chat UI<br>(实时对话)"]
-    KGViewer["KG Viewer<br>(Cytoscape)"]
-    Evidence["Evidence Panel<br>(证据显示)"]
+  subgraph FE["Frontend (Vue 3 + Vite)"]
+    ChatUI["Chat UI\n(实时对话)"]
+    KGViewer["KG Viewer\n(Cytoscape)"]
+    Evidence["Evidence Panel\n(证据显示)"]
   end
 
-  subgraph BE [Backend (FastAPI + Python)]
-    API["Query API<br>(/api/v1 & SSE)"]
-    RAG["RAG Engine<br>(实体抽取 + KG + Vector + LLM)"]
-    Auth["Auth & Audit<br>(JWT + 日志)"]
+  subgraph BE["Backend (FastAPI + Python)"]
+    API["Query API\n(/api/v1 & SSE)"]
+    RAG["RAG Engine\n(实体抽取 + KG + Vector + LLM)"]
+    Auth["Auth & Audit\n(JWT + 日志)"]
   end
 
   ChatUI -->|HTTP / SSE| API
   KGViewer -->|API| API
   Evidence -->|API| API
   API --> RAG
-  RAG --> Neo4j["Neo4j<br>(知识图谱)"]
-  RAG --> Qdrant["Qdrant<br>(向量索引)"]
-  API --> Postgres["PostgreSQL<br>(元数据/审计)"]
+  RAG --> Neo4j["Neo4j\n(知识图谱)"]
+  RAG --> Qdrant["Qdrant\n(向量索引)"]
+  API --> Postgres["PostgreSQL\n(元数据/审计)"]
 
   style FE fill:#f3f4f6,stroke:#9ca3af
   style BE fill:#fef3c7,stroke:#f59e0b
