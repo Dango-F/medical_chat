@@ -86,7 +86,43 @@ flowchart TB
   style Postgres fill:#fbcfe8,stroke:#ec4899
 ```
 
-> 注：如果 README 在某些渲染环境不显示 Mermaid，你也可以参考上方的 ASCII 图（兼容性更好）。
+## 架构说明 ✅
+
+下文简要说明架构中各组件的职责与关键交互。
+
+- **Frontend（Vue 3 + Vite）**：提供 `Chat UI`、`KG Viewer`、`Evidence Panel` 等界面组件；负责收集用户消息、展示流式回复以及证据详情，向后端发起 HTTP / SSE 请求并渲染逐段返回的响应。
+- **Backend（FastAPI + Python）**：暴露查询与流式 API（`/api/v1`），处理鉴权与审计，协调 RAG 引擎、会话与持久化服务，负责将 LLM 的生成流式推送回前端。
+- **RAG Engine（检索-增强生成）**：负责对当前 query 做实体抽取、并行调用 Neo4j（知识图谱）与 Qdrant（向量索引）检索证据，合并最近上下文并构造 prompt 提交给 LLM，最终融合“证据段 + 回答”供前端展示。
+- **Neo4j（知识图谱）**：提供基于实体的精确/全文/包含检索与关系扩展，用于构建结构化上下文与溯源证据。
+
+#### 知识图谱数据源 📚
+
+- 数据来源： [DiseaseKG: 基于 cnSchema 常见疾病信息知识图谱](http://data.openkg.cn/dataset/disease-information)
+- 简介：DiseaseKG 提供结构化的常见疾病实体与关系，适合导入 Neo4j 作为主要的 KG 数据来源，用于实体匹配、关系检索与证据溯源。
+
+- **Qdrant（向量索引）**：存储文本嵌入并支持相似度检索，作为补充证据来源以提升召回与回答准确性。
+- **PostgreSQL / SQLite（元数据与会话）**：负责会话历史、短期记忆与审计日志的持久化存储（可配置为 PostgreSQL 或 SQLite）。
+- **Auth & Audit**：JWT 鉴权、请求与证据访问审计、日志记录，确保合规与可追溯。
+- **LLM（外部或托管模型）**：接收 RAG 构建的 prompt 并返回生成文本；系统设计支持流式返回（SSE）。
+
+### 数据流（请求示例） 🔁
+
+1. 用户在前端输入问题并发送；前端会收集最近 N 条消息（默认 12 条）并把当前消息通过 HTTP POST（或建立 SSE）发送到后端 `POST /api/v1/query`。
+2. 后端验证请求并查找会话后，触发 RAG 流程处理该 query。
+3. **实体抽取仅基于当前 query**（以避免将与本轮无关的历史证据混入本次检索）。
+4. 使用抽取到的实体在 Neo4j 中优先按 `exact → fulltext → contains` 的顺序检索；同时以 query 为输入对 Qdrant 做向量检索以获取相似文本片段。
+5. 将检索到的证据与最近上下文（后端默认使用最近 6 条消息）合并，构造 prompt 并调用 LLM 生成回答。
+6. 后端以 SSE 或分块 HTTP 方式将生成的回答逐段发送到前端；同时将会话、证据片段索引与审计日志持久化到数据库。
+7. 前端逐段渲染回答并在证据面板中展示检索来源，用户可展开查看或标注错误证据以改进系统。
+
+### 关键设计点与注意事项 ⚠️
+
+- **证据隔离**：检索使用当前 query 的实体提取，避免展示与本轮无关的历史证据，增强可解释性与安全性。
+- **同义词与回退机制**：KG 检索内置 `SYNONYMS` 同义词映射与 n-gram 回退逻辑，以提升对口语/别名（例如“小儿麻痹症” → “脊髓灰质炎”）的召回能力。
+- **流式体验**：使用 SSE 实现低延迟、分段流式响应，前端需支持重连与错误恢复策略。
+- **安全与审计**：对敏感查询与证据访问进行审计与脱敏处理，确保合规性。
+
+详见：`docs/KG_query_flow.md` 与 `docs/DEBUG.md`，里面有更详细的检索流程与调试步骤。
 
 ## 📁 项目结构
 
@@ -137,8 +173,8 @@ flowchart TB
 cd backend
 
 # 创建虚拟环境
-python -m venv venv
-source venv/bin/activate  # Windows: .\venv\Scripts\activate
+conda create -n medical_chat python=3.11
+conda activate medical_chat
 
 # 安装依赖
 pip install -r requirements.txt
@@ -212,34 +248,8 @@ npm run dev
 ## 📊 数据来源
 
 本系统知识图谱数据来源于以下公开医学资源：
+数据来源： [DiseaseKG: 基于 cnSchema 常见疾病信息知识图谱](http://data.openkg.cn/dataset/disease-information)
 
-| 数据源          | 类型     | 许可证         |
-| --------------- | -------- | -------------- |
-| PubMed/MEDLINE  | 文献摘要 | Public Domain  |
-| DrugBank (Open) | 药物数据 | CC BY-NC 4.0   |
-| ICD-10          | 疾病编码 | WHO License    |
-| 临床指南        | 诊疗规范 | 各发布机构许可 |
+## 📧 联系方式
 
-## 🧪 测试
-
-```bash
-# 后端测试
-cd backend
-pytest tests/ -v --cov=app
-
-# 前端测试
-cd frontend
-npm run test
-```
-
-## 📝 许可证
-
-MIT License - 详见 [LICENSE](LICENSE) 文件
-
-## 🤝 贡献指南
-
-欢迎贡献代码、报告问题或提出建议。请查看 [CONTRIBUTING.md](docs/CONTRIBUTING.md)。
-
-## 📞 联系方式
-
-如有问题或建议，请通过 Issues 提交。
+如有问题或建议，请联系1847539781@qq.com。
