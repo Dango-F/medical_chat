@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+venv/
+.venv/
+env/
+.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+frontend/dist/
+
+# Build / logs
+build/
+dist/
+*.log
+coverage/
+
+# Databases / data
+*.sqlite3
+*.db
+data/*.db
+# If you keep large datasets out of repo, ignore newdata and temporary exports
+diseasekg/newdata/
+diseasekg/tmp/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Misc
+*.bak
+*.swp
+```

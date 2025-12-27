@@ -1,0 +1,316 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@layer base {
+  html {
+    font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-900;
+    line-height: 1.6;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+
+  /* Remove focus outline globally */
+  *:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  a:focus,
+  a:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+@layer components {
+  /* Chat bubble styles */
+  .chat-bubble {
+    @apply p-5 rounded-2xl animate-slide-up shadow-sm;
+  }
+
+  .chat-bubble-user {
+    @apply bg-primary-500 text-white ml-auto rounded-br-none;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+  }
+
+  .chat-bubble-assistant {
+    @apply bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 mr-auto rounded-bl-none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .chat-bubble:focus,
+  .chat-bubble:focus-visible {
+    outline: none;
+    box-shadow: inherit;
+  }
+
+  /* Remove focus styling inside chat content */
+  .chat-bubble *:focus,
+  .chat-bubble *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  /* Evidence badge */
+  .evidence-badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition-colors;
+  }
+
+  .evidence-badge-pubmed {
+    @apply bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800;
+  }
+
+  .evidence-badge-guideline {
+    @apply bg-green-50 text-green-700 border-green-100 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800;
+  }
+
+  .evidence-badge-drugbank {
+    @apply bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800;
+  }
+
+  /* Confidence bar */
+  .confidence-bar {
+    @apply h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden;
+  }
+
+  .confidence-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out shadow-sm;
+  }
+
+  /* Button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-xl font-medium transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+    @apply active:scale-95;
+  }
+
+  .btn:focus,
+  .btn:focus-visible {
+    @apply ring-0 ring-offset-0 outline-none shadow-none;
+  }
+
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white shadow-lg shadow-primary-500/20;
+    @apply focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700;
+    @apply text-gray-700 dark:text-gray-200 shadow-sm;
+    @apply focus:ring-gray-500;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400;
+  }
+
+  /* Input styles */
+  .input {
+    @apply w-full px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-700;
+    @apply bg-white dark:bg-gray-800 transition-shadow duration-200;
+    @apply focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500;
+    @apply placeholder-gray-400 dark:placeholder-gray-500;
+  }
+
+  /* Loading animation */
+  .loading-dots span {
+    @apply inline-block w-1.5 h-1.5 rounded-full mx-0.5 animate-pulse-soft;
+  }
+
+  .loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  /* Markdown content styling */
+  .markdown-content {
+    @apply text-base;
+  }
+
+  .markdown-content h2 {
+    @apply text-lg font-bold text-gray-800 dark:text-gray-100 mt-5 mb-3;
+  }
+
+  .markdown-content h3 {
+    @apply text-base font-semibold text-gray-700 dark:text-gray-200 mt-4 mb-2;
+  }
+
+  .markdown-content p {
+    @apply mb-4 leading-relaxed text-gray-600 dark:text-gray-300;
+  }
+
+  .markdown-content ul,
+  .markdown-content ol {
+    @apply mb-4 pl-5 space-y-2 text-gray-600 dark:text-gray-300;
+  }
+
+  .markdown-content li {
+    @apply leading-relaxed pl-1 marker:text-primary-400;
+  }
+
+  .markdown-content strong {
+    @apply font-bold text-gray-900 dark:text-white;
+  }
+
+  .markdown-content code {
+    @apply bg-gray-100 dark:bg-gray-700/50 px-1.5 py-0.5 rounded text-sm font-mono text-primary-600 dark:text-primary-400;
+  }
+
+  .markdown-content pre {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto mb-4 text-sm;
+  }
+
+  .markdown-content blockquote {
+    @apply border-l-4 border-primary-500 pl-4 py-1 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-r-lg;
+  }
+
+  .markdown-content table {
+    @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700 mb-4;
+  }
+
+  .markdown-content th {
+    @apply px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-800;
+  }
+
+  .markdown-content td {
+    @apply px-3 py-2 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-gray-700;
+  }
+
+  /* Knowledge graph node colors */
+  .node-disease {
+    @apply bg-disease text-white shadow-lg shadow-disease/20;
+  }
+  .node-symptom {
+    @apply bg-symptom text-white shadow-lg shadow-symptom/20;
+  }
+  .node-drug {
+    @apply bg-drug text-white shadow-lg shadow-drug/20;
+  }
+  .node-guideline {
+    @apply bg-guideline text-white shadow-lg shadow-guideline/20;
+  }
+  .node-reference {
+    @apply bg-reference text-white shadow-lg shadow-reference/20;
+  }
+  .node-warning {
+    @apply bg-warning text-white shadow-lg shadow-warning/20;
+  }
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s infinite ease-in-out;
+}
+
+/* Streaming animation delays */
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
