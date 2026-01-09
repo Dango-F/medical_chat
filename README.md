@@ -179,6 +179,9 @@ conda activate medical_chat
 # 安装依赖
 pip install -r requirements.txt
 
+# 构建知识图谱
+python build_kg.py
+
 # 配置环境变量
 cp env.example.txt .env
 # 编辑 .env 文件配置 API Key 和数据库连接
